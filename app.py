@@ -83,6 +83,9 @@ if experiences_file is not None and shadowing_preferences_file is not None and s
             preference_col = f"Preference #{i}"
             experience_num = int(name_row[preference_col].values[0])
             experience_row = experiences[experiences["Experience #"].astype(int) == experience_num]
+            # If student enters an incorrect experience number, then skip that number
+            if experience_row.empty:
+                continue
             # Find the number of students that provider can take
             num_students = int(experience_row.iloc[0]["# Students"])
             idx = experience_row.index[0] # index of the experience
