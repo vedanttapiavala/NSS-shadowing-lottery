@@ -7,15 +7,18 @@ st.title("NSS Shadowing Lottery")
 col1, col2 = st.columns(2)
 # Uploading files and processing that into data frames
 col1.subheader("Upload")
-experiences_file = col1.file_uploader("Experiences Template File Upload", type=["xlsx"])
-shadowing_preferences_file = col1.file_uploader("Shadowing Preferences File Upload", type=["xlsx"])
+experiences_file = col1.file_uploader("Upload the list of providers that have agreed to offer shadowing",
+    type=["xlsx"],
+    help="The file should contain a column called \"Experience #\", with the available experiences.")
+shadowing_preferences_file = col1.file_uploader("Shadowing Preferences File Upload",
+    type=["xlsx"],
+    help="The file should contain students' names in a column called \"Your Name,\" with the remaining columns being Preferences #1-5")
 if experiences_file is not None:
     experiences = pd.read_excel(experiences_file)
 if shadowing_preferences_file is not None:
     shadowing_preferences = pd.read_excel(shadowing_preferences_file)
 # Adding area to enter high-priority students (did not get shadowing in the previous quarter)
-col2.write("Enter students' names who did not get shadowing last quarter, each on its own line.")
-high_preference_names = col2.text_area("High preferences")
+high_preference_names = col2.text_area("Enter students' names who did not get shadowing last quarter, each on its own line.")
 # Preserve the list of students who will not get their top 5 providers this quarter despite app hot refreshes
 if "no_shadowing_list" not in st.session_state:
     st.session_state.no_shadowing_list = []
