@@ -40,7 +40,16 @@ if experiences_file is not None:
         col_name = f"Student {i}"
         if col_name not in experiences.columns:
             experiences[col_name] = None
-
+# Pre-process shadowing preferences file
+if shadowing_preferences_file is not None:
+    for i in range(1,6):
+        col_name = f"Preference #{i}"
+        shadowing_preferences[col_name] = (
+            shadowing_preferences[col_name]
+            .astype(str)
+            .str.replace(r"\D","", regex=True)
+            .astype(int)
+        )
 # Adding area to enter high-priority students (did not get shadowing in the previous quarter)
 high_preference_names = col2.text_area("Enter students' names who did not get shadowing last quarter, each on its own line.")
 # Preserve the list of students who will not get their top 5 providers this quarter despite app hot refreshes
