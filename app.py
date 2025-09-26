@@ -8,15 +8,21 @@ col1, col2 = st.columns(2)
 # Uploading files and processing that into data frames
 col1.subheader("Upload")
 experiences_file = col1.file_uploader("Upload the list of providers that have agreed to offer shadowing",
-    type=["xlsx"],
+    type=["xlsx", "csv"],
     help="The file should contain a column called \"Experience #\", with the available experiences.")
 shadowing_preferences_file = col1.file_uploader("Shadowing Preferences File Upload",
-    type=["xlsx"],
+    type=["xlsx", "csv"],
     help="The file should contain students' names in a column called \"Your Name,\" with the remaining columns being Preferences #1-5")
 if experiences_file is not None:
-    experiences = pd.read_excel(experiences_file)
+    if experiences_file.name.lower().endswith(".csv"):
+        experiences = pd.read_csv(experiences_file)
+    else:
+        experiences = pd.read_excel(experiences_file)
 if shadowing_preferences_file is not None:
-    shadowing_preferences = pd.read_excel(shadowing_preferences_file)
+    if shadowing_preferences_file.name.lower().endswith(".csv"):
+        shadowing_preferences = pd.read_csv(shadowing_preferences_file)
+    else:
+        shadowing_preferences = pd.read_excel(shadowing_preferences_file)
 # Adding area to enter high-priority students (did not get shadowing in the previous quarter)
 high_preference_names = col2.text_area("Enter students' names who did not get shadowing last quarter, each on its own line.")
 # Preserve the list of students who will not get their top 5 providers this quarter despite app hot refreshes
