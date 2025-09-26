@@ -9,7 +9,7 @@ col1, col2 = st.columns(2)
 col1.subheader("Upload")
 experiences_file = col1.file_uploader("Upload the list of providers that have agreed to offer shadowing",
     type=["xlsx", "csv"],
-    help="The file should contain a column called \"Experience #\", with the available experiences.")
+    help="The file should contain a column called \"Experience #\", with the available experiences, and \"# Students.\"")
 shadowing_preferences_file = col1.file_uploader("Shadowing Preferences File Upload",
     type=["xlsx", "csv"],
     help="The file should contain students' names in a column called \"Your Name,\" with the remaining columns being Preferences #1-5")
@@ -23,6 +23,24 @@ if shadowing_preferences_file is not None:
         shadowing_preferences = pd.read_csv(shadowing_preferences_file)
     else:
         shadowing_preferences = pd.read_excel(shadowing_preferences_file)
+# Pre-process experiences_file data frame:
+# Number of students, if a range (3-4), should be changed to just a number (higher one)
+# Need to find the max number of students across all experiences and create "Student _" columns for that if absent
+if experiences_file is not None:
+    experiences["# Students"] = (
+        experiences["# Students"]
+        .astype(str)
+        .str.replace(r"\s+", "", regex=True)
+        .str.split(r"-|to|or", regex=True)
+        .str.get(-1)
+        .astype(int)
+    )
+    max_num_students = experiences["# Students"].max()
+    for i in range(1, max_num_students+1):
+        col_name = f"Student {i}"
+        if col_name not in experiences.columns:
+            experiences[col_name] = None
+
 # Adding area to enter high-priority students (did not get shadowing in the previous quarter)
 high_preference_names = col2.text_area("Enter students' names who did not get shadowing last quarter, each on its own line.")
 # Preserve the list of students who will not get their top 5 providers this quarter despite app hot refreshes
