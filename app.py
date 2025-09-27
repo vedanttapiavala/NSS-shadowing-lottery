@@ -31,6 +31,7 @@ if experiences_file is not None:
         experiences["# Students"]
         .astype(str)
         .str.replace(r"\s+", "", regex=True)
+        .str.replace(r"\D","", regex=True)
         .str.split(r"-|to|or", regex=True)
         .str.get(-1)
         .astype(int)
@@ -48,6 +49,8 @@ if shadowing_preferences_file is not None:
             shadowing_preferences[col_name]
             .astype(str)
             .str.replace(r"\D","", regex=True)
+            .replace("", pd.NA)
+            .dropna()
             .astype(int)
         )
 # Adding area to enter high-priority students (did not get shadowing in the previous quarter)
