@@ -31,9 +31,9 @@ if experiences_file is not None:
         experiences["# Students"]
         .astype(str)
         .str.replace(r"\s+", "", regex=True)
-        .str.replace(r"\D","", regex=True)
         .str.split(r"-|to|or", regex=True)
         .str.get(-1)
+        .str.replace(r"\D","", regex=True)
         .astype(int)
     )
     max_num_students = experiences["# Students"].max()
