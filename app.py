@@ -2,6 +2,7 @@ import streamlit as st # type: ignore
 import pandas as pd # pyright: ignore[reportMissingModuleSource]
 from io import BytesIO
 import random
+import openpyxl # pyright: ignore[reportMissingModuleSource]
 
 st.title("NSS Shadowing Lottery")
 col1, col2 = st.columns(2)
