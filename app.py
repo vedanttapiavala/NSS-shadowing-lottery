@@ -41,7 +41,9 @@ if experiences_file is not None:
     for i in range(1, max_num_students+1):
         col_name = f"Student {i}"
         if col_name not in experiences.columns:
-            experiences[col_name] = None
+            experiences[col_name] = pd.Series([None]*len(experiences), dtype=object)
+        else:
+            experiences[col_name] = experiences[col_name].astype(object)
 # Pre-process shadowing preferences file
 if shadowing_preferences_file is not None:
     for i in range(1,6):
@@ -49,10 +51,9 @@ if shadowing_preferences_file is not None:
         shadowing_preferences[col_name] = (
             shadowing_preferences[col_name]
             .astype(str)
-            .str.replace(r"\D","", regex=True)
-            .replace("", pd.NA)
-            .dropna()
-            .astype(int)
+            .str.strip()
+            .str.extract(r"(\d+)")[0]
+            .apply(lambda x: int(x) if pd.notna(x) else pd.NA)
         )
 # Adding area to enter high-priority students (did not get shadowing in the previous quarter)
 high_preference_names = col2.text_area("Enter students' names who did not get shadowing last quarter, each on its own line.")
@@ -85,10 +86,17 @@ if experiences_file is not None and shadowing_preferences_file is not None and s
         for i in range(1,6):
             # Find their i-th preference and the corresponding experience (provider)
             preference_col = f"Preference #{i}"
+            if pd.isna(name_row[preference_col].values[0]):
+                continue
             experience_num = int(name_row[preference_col].values[0])
             experience_row = experiences[experiences["Experience #"].astype(int) == experience_num]
             # If student enters an incorrect experience number, then skip that number
             if experience_row.empty:
+                print(experiences["Experience #"].astype(int))
+                print(name, preference_col)
+                print(experience_num)
+                print(experiences[experiences["Experience #"].astype(int) == experience_num])
+                print(name)
                 continue
             # Find the number of students that provider can take
             num_students = int(experience_row.iloc[0]["# Students"])
